@@ -43,28 +43,31 @@ def main(page: ft.Page):
                 value /= 100
             elif operador == "+-":
                 value = -value
-        except:
-            return "Error"
+            else:
+                # Assegura que nenhuma operação indesejada seja processada.
+                raise ValueError("Operação inválida")
 
-        digits = min(abs(Decimal(value).as_tuple().exponent), 5)
-        return format(value, f".{digits}f")
+            digits = abs(Decimal(value).as_tuple().exponent)  # Correção aqui
+            # Corrigido para formatar corretamente os valores flutuantes.
+            return format(value, f".{digits}f")
+
+        except Exception as e:
+            return "Error"
 
     def select(e):
         value_at = result.value if result.value not in {"0", "Error"} else ""
         value = e.control.content.value
 
-        if value.isdigit():
+        if value.isdigit() or value == ".":
             value = value_at + value
         elif value == "AC":
             value = "0"
+        elif value in ("=", "%", "+-"):
+            value = calculate(value, value_at)
         else:
-            if value_at and value_at[-1] in ("/", "*", "-", "+", "."):
+            if value_at and value_at[-1] in ("/", "*", "-", "+"):
                 value_at = value_at[:-1]
-
             value = value_at + value
-
-            if value[-1] in ("=", "%", "+-"):
-                value = calculate(operador=value[-1], value_at=value_at)
 
         result.value = value
         result.update()
@@ -76,14 +79,14 @@ def main(page: ft.Page):
     )
 
     btn = [ft.Container(
-        content=ft.Text(value=btn["operador"], color=btn["fonte"]),
+        content=ft.Text(value=b["operador"], color=b["fonte"]),
         width=50,
         height=50,
-        bgcolor=btn["fundo"],
+        bgcolor=b["fundo"],
         border_radius=100,
         alignment=ft.alignment.center,
         on_click=select
-    ) for btn in botoes]
+    ) for b in botoes]
 
     Keyboard = ft.Row(
         width=270,
