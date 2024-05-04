@@ -44,12 +44,10 @@ def main(page: ft.Page):
             elif operador == "+-":
                 value = -value
             else:
-                # Assegura que nenhuma operação indesejada seja processada.
-                raise ValueError("Operação inválida")
 
-            digits = abs(Decimal(value).as_tuple().exponent)  # Correção aqui
-            # Corrigido para formatar corretamente os valores flutuantes.
-            return format(value, f".{digits}f")
+                digits = abs(Decimal(value).as_tuple().exponent)
+
+                return format(value, f".{digits}f")
 
         except Exception as e:
             return "Error"
